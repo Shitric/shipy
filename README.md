@@ -60,9 +60,3 @@ $shipy->setRenderer(Shipy::RENDERER_URL);
 # Belirtilen değerlerle birlikte Shipy sınıfı içerisindeki initialize metodunu çağırıp işlemi sonlandırıyoruz.
 $shipy->initialize();
 ```
-
-# İletişim
-
-**Email:** furkan.byzyldz@gmail.com
-
-Özel entegrasyon talepleriniz için, **https://tuxisoft.com**
