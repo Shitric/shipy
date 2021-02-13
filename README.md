@@ -23,7 +23,7 @@ $shipy = new Shipy('e7cf5fe32c1f8f1f', Shipy::PAYMENT_CREDIT_CARD, Shipy::CUR_TR
 $shipy->setCustomer([
     'ip' => $_SERVER['REMOTE_ADDR'], # Müşterinin IP Adresi (PHP dilinin sahip olduğu global $_SERVER değişkeni içerisinden IP adresini alabilirsiniz, $_SERVER['REMOTE_ADDR'])
     'name' => 'Furkan Beyazyıldız', # Müşterinin Adı ve Soyadı
-    'address' => 'Fevzi Çakmak Mah. 8154 Sokak', # Müşterinin Adres Bilgisi
+    'address' => 'Fevzi Çakmak Mah.', # Müşterinin Adres Bilgisi
     'phone' => '05538459192', # Müşterinin Telefon Numarası
     'email' => 'furkan.byzyldz@gmail.com' # Müşterinin Email Adresi
 ]);
