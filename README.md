@@ -22,10 +22,10 @@ $shipy = new Shipy('e7cf5fe32c1f8f1f', Shipy::PAYMENT_CREDIT_CARD, Shipy::CUR_TR
 # setCustomer metodu ile müşteri bilgilerimizi tanımlıyoruz.
 $shipy->setCustomer([
     'ip' => $_SERVER['REMOTE_ADDR'], # Müşterinin IP Adresi (PHP dilinin sahip olduğu global $_SERVER değişkeni içerisinden IP adresini alabilirsiniz, $_SERVER['REMOTE_ADDR'])
-    'name' => 'Furkan Beyazyıldız', # Müşterinin Adı ve Soyadı
-    'address' => 'Fevzi Çakmak Mah.', # Müşterinin Adres Bilgisi
-    'phone' => '05538459192', # Müşterinin Telefon Numarası
-    'email' => 'furkan.byzyldz@gmail.com' # Müşterinin Email Adresi
+    'name' => 'John Doe', # Müşterinin Adı ve Soyadı
+    'address' => 'Ex. Address', # Müşterinin Adres Bilgisi
+    'phone' => '05551112233', # Müşterinin Telefon Numarası
+    'email' => 'john.doe@mail.com' # Müşterinin Email Adresi
 ]);
 
 # setLocale metodu ile sayfa ve mail dilini tanımlıyoruz.
