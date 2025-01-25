@@ -1,62 +1,136 @@
-# Shipy
-Shipy sınıfı sayesinde Shipy API kullanarak Kredi/Banka Kartı veya Mobil Ödeme yöntemlerini kullanarak kolayca entegrasyon yapabilirsiniz.
+# Shipy Payment Integration
 
-# Örnek Kullanım
+[![PHP Version](https://img.shields.io/badge/php-%3E%3D8.2-8892BF.svg)](https://php.net/)
+[![Latest Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/shipy/payment/releases)
+[![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 
+Shipy, PHP 8.2+ için modern ve güvenli bir ödeme entegrasyon kütüphanesidir. PSR standartlarına uygun olarak geliştirilmiş olup, kredi kartı ve mobil ödeme yöntemlerini destekler.
+
+## 📋 Özellikler
+
+- ✨ Modern PHP 8.2+ özellikleri (readonly properties, enums, named arguments)
+- 🔒 Güvenli ödeme işlemleri
+- 🌐 Çoklu para birimi desteği (TRY, USD, EUR, GBP)
+- 🌍 Çoklu dil desteği
+- 🎨 Özelleştirilebilir görüntüleme seçenekleri
+- ⚡ PSR-4 uyumlu otomatik yükleme
+- 🛡️ Güçlü tip kontrolü ve hata yönetimi
+
+## 🔧 Gereksinimler
+
+- PHP >= 8.2
+- ext-json
+- ext-mbstring
+- guzzlehttp/guzzle ^7.8
+
+## 📦 Kurulum
+
+```bash
+composer require shipy/payment
 ```
-<?php
 
-# Shipy.php dosyasını projemize dahil ediyoruz.
-require 'Shipy.php'; 
+## 🚀 Hızlı Başlangıç
 
-# $shipy isimli bir değişken oluşturup Shipy sınıfını bu değişkene türetiyoruz.
-# Sınıfın aldığı değerler sırasıyla: API Anahtarı, Ödeme Yöntemi (Kredi/Banka Kartı ve Mobil Ödeme) ve Para Birimi.
-#
-# Ödeme yöntemi için Shipy sınıfının sahip olduğu iki adet enum değerini kullanabilirsiniz. PAYMENT_CREDIT_CARD - PAYMENT_MOBILE
-# Not: PAYMENT_MOBILE değeri kullanılacaksa setLocale metodunun tanımlanmasına gerek yoktur.
-#
-# Para birimi için Shipy sınıfının sahip olduğu 4 adet enum değerini kullanabilirsiniz. CUR_TRY (Türk Lirası) - CUR_EUR (Euro) - CUR_USD (Amerikan Doları) - CUR_GBP (İngiliz Sterlini)
+```php
+use Shipy\Payment\Payment;
+use Shipy\Enum\PaymentMethod;
+use Shipy\Enum\Currency;
+use Shipy\Enum\Language;
+use Shipy\Enum\Renderer;
 
-$shipy = new Shipy('e7cf5fe32c1f8f1f', Shipy::PAYMENT_CREDIT_CARD, Shipy::CUR_TRY); 
+// Ödeme nesnesini oluştur
+$payment = new Payment(
+    apiKey: 'YOUR_API_KEY',
+    paymentMethod: PaymentMethod::CREDIT_CARD,
+    currency: Currency::TRY
+);
 
-# setCustomer metodu ile müşteri bilgilerimizi tanımlıyoruz.
-$shipy->setCustomer([
-    'ip' => $_SERVER['REMOTE_ADDR'], # Müşterinin IP Adresi (PHP dilinin sahip olduğu global $_SERVER değişkeni içerisinden IP adresini alabilirsiniz, $_SERVER['REMOTE_ADDR'])
-    'name' => 'John Doe', # Müşterinin Adı ve Soyadı
-    'address' => 'Ex. Address', # Müşterinin Adres Bilgisi
-    'phone' => '05551112233', # Müşterinin Telefon Numarası
-    'email' => 'john.doe@mail.com' # Müşterinin Email Adresi
+// Müşteri bilgilerini ayarla
+$payment->setCustomer([
+    'ip' => $_SERVER['REMOTE_ADDR'],
+    'name' => 'John Doe',
+    'address' => 'İstanbul, Türkiye',
+    'phone' => '5551234567',
+    'email' => 'john@example.com'
 ]);
 
-# setLocale metodu ile sayfa ve mail dilini tanımlıyoruz.
-# Sayfa dili için Shipy sınıfının sahip olduğu 6 adet enum değerini kullanabilirsiniz. LANG_TR (Türkçe) - LANG_EN (İngilizce) - LANG_DE (Almanca) - LANG_AR (Arapça) - LANG_ES (İspanyolca) - LANG_FR (Fransızca)
-# Mail dili için Shipy sınıfının sahip olduğu iki adet enum değerini kullanabilirsiniz. LANG_TR (Türkçe) - LANG_EN (İngilizce)
-$shipy->setLocale([
-    'page' => Shipy::LANG_TR,
-    'mail' => Shipy::LANG_TR
+// Ürün bilgilerini ayarla
+$payment->setProduct([
+    'orderID' => '123456789',
+    'amount' => 100.00,
+    'installment' => 1
 ]);
 
-# setProduct metodu ile ürün bilgilerini tanımlıyoruz.
-$shipy->setProduct([
-    'orderID' => '156825674', # Sipariş numarası (Yalnızca sayılardan oluşmalıdır ve genelde 9 haneli olur)
-    'amount' => 100, # Ürün fiyatı (Ondalık değer göndermemeniz tavsiye edilir. 1.000₺ için 1000 göndermeniz yeterlidir)
-    'installment' => 0 # Ürün için taksit seçeneği (0 Gönderilirse tek çekim, 1 - 12 arası gönderilirse maksimum taksit seçeneği belirlenir)
-]);
-
-# setRenderer metodu ile oluşturucu tanımlıyoruz.
-# Oluşturucu için Shipy sınıfının sahip olduğu 2 adet enum değerini kullanabilirsiniz. RENDERER_URL - RENDERER_BUTTON
-#
-# RENDERER_URL = Kullanıcıyı otomatik olarak ödeme sayfasına yönlendirir
-# RENDERER_BUTTON = Ekrana belirtilen yazıda ve stilde bir buton yazdırır. Butona tıkladıktan sonra ödeme sayfasına yönlendirir.
-# Not: RENDERER_BUTON değeri kullanılacaksa setRenderer metodu ikinci bir parametreye ihtiyac duyar, örnek olacak şekilde aşağıda belirtilmiştir.
-#
-# $shipy->setRenderer(Shipy::RENDERER_BUTTON, array(
-#     'text' => 'Shipy ile Güvenli Öde',
-#     'class' => 'shipy-pay',
-#     'target' => '_self'
-# ));
-$shipy->setRenderer(Shipy::RENDERER_URL);
-
-# Belirtilen değerlerle birlikte Shipy sınıfı içerisindeki initialize metodunu çağırıp işlemi sonlandırıyoruz.
-$shipy->initialize();
+// Ödeme işlemini başlat
+echo $payment->initialize();
 ```
+
+## 🔍 Detaylı Kullanım
+
+### Ödeme Yöntemleri
+
+```php
+// Kredi Kartı
+$payment = new Payment(
+    apiKey: 'YOUR_API_KEY',
+    paymentMethod: PaymentMethod::CREDIT_CARD
+);
+
+// Mobil Ödeme
+$payment = new Payment(
+    apiKey: 'YOUR_API_KEY',
+    paymentMethod: PaymentMethod::MOBILE
+);
+```
+
+### Görüntüleme Seçenekleri
+
+```php
+// URL ile yönlendirme
+$payment->setRenderer(Renderer::URL);
+
+// Özel buton
+$payment->setRenderer(
+    renderer: Renderer::BUTTON,
+    buttonConfig: [
+        'text' => 'Shipy ile Güvenli Öde',
+        'class' => 'shipy-button',
+        'target' => '_self'
+    ]
+);
+```
+
+### Callback Doğrulama
+
+```php
+if ($payment->isValidPayment()) {
+    // Ödeme başarılı
+    // Siparişi onayla
+} else {
+    // Ödeme başarısız
+    // Hata mesajı göster
+}
+```
+
+## 🛡️ Güvenlik
+
+- API anahtarınızı güvenli bir şekilde saklayın
+- HTTPS kullanın
+- Ödeme callback'lerini her zaman doğrulayın
+- Hassas bilgileri loglamayın
+
+## 🤝 Katkıda Bulunma
+
+1. Fork edin
+2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
+3. Değişikliklerinizi commit edin (`git commit -m 'feat: amazing new feature'`)
+4. Branch'inizi push edin (`git push origin feature/amazing-feature`)
+5. Pull Request oluşturun
+
+## 📝 Lisans
+
+Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICENSE) dosyasına bakın.
+
+## 🙋 Destek
+
+Sorularınız için [GitHub Issues](https://github.com/shipy/payment/issues) kullanabilirsiniz.
